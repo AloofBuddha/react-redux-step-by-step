@@ -10,10 +10,8 @@ const PORT = 3001;
 // logging
 app.use(morgan('dev'));
 
-// serves up files from /public, /browser, /node_modules
+// serves up files from /public - webpack is handling the rest and outputing public/bundle.js!
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, 'browser')));
-app.use(express.static(path.join(__dirname, 'node_modules')));
 
 // serves up main (only) page /index.html
 app.get('/', (req, res, next) => {

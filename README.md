@@ -2,28 +2,73 @@
 React-Redux - Step by Step
 ==========================
 
-00-basic-es5-react
+01-basic-es6-react
 ------------------
 
-> All of the 'steps' are located on individual branches, so it is easier to see changesets
-> To checkout part 0, `git checkout 00-basic-es5-react`
+What we are looking to do here is update our app minimally so we can use ES6 and JSX when writing out React code. To accomplish this, we will be using a tool called `Webpack`. Webpack is going to allow us to take ES6 code (including ES6 modules) that contains JSX and transform it into standard ES5 code. Even better, Webpack simply needs to know about our 'root' front-end file and it will crawl through all of that files dependencies (and *that* files dependencies, recursively) and output a single JS file. This makes it simple for us to write our code using modules, and now we don't need to worry about adding our scripts in the correct order - Webpack does it all for us!
 
-I will try to keep things minimal, so I'm working with a bare bones file structure
+First, we add `webpack` as a dev-dependency, along with the other dependencies it works with for transforming our ES6 to ES5.
 
-***File Structure***
+`npm install --save-dev webpack babel-core babel-loader babel-preset-es2015 babel-preset-react`
 
+We'll also update out `start` script in *package.json* to invoke webpack
+
+***package.json***
+
+```json
+{
+  // ...
+  "scripts": {
+    "start": "webpack -w & nodemon server.js"
+  }
+}
 ```
-|- browser
-  |- app.js (client-side root)
-  |- etc. (more client side files would go here)
-|
-|- public    (serves CSS and index.html, other static files)
-|- server.js (server-side root)
+
+`&` here executes two shell commands but in parallel (or, in a non-blocking manner, more specifically). The reason is because `webpack -w` will be running continually, and if we used `&&` it would block forever so `nodemon server.js` would never run. Webpack is only responsible for reading our server code and outputting a 'bundled' js file, which we expect out HTML to reference.
+
+To make webpack actually *do* something, we need to add a config file - `webpack.config.js`
+
+***webpack.config.js***
+
+```js
+'use strict';
+
+const webpack = require('webpack');
+
+module.exports = {
+  // the 'input' for webpack - it will look at this file and recursively
+  // search its dependencies
+  entry: './browser/app.js',
+  // where webpack should place its 'output' - traditionally called 'bundle.js'
+  output: {
+    path: __dirname,
+    filename: './public/bundle.js'
+  },
+  context: __dirname,
+  // this line gives us better error logging, so errors reference the line
+  // in our source code, *not* in bundle.js
+  devtool: 'source-map',
+  module: {
+    // these are our 'transformations'
+    loaders: [
+      {
+        // will transform any .js or .jsx file
+        test: /jsx?$/,
+        // won't look in these folders
+        exclude: /(node_modules|bower_components)/,
+        // this is the tool doing the transformation - Babel
+        loader: 'babel-loader',
+        query: {
+          // these are the two transformations we selected - ES6 and JSX!
+          presets: ['react', 'es2015']
+        }
+      }
+    ]
+  }
+};
 ```
 
-Looking at `server.js` you will see that our server is a basic express app.
-Files in `/public`, `/browser` and `/node_modules` are all exposed through static-file serving middleware.
-All routes redirect to the root, and the root simply serves up `index.html`
+Now we update `index.html` to reference just bundle.js
 
 ***public/index.html***
 
@@ -37,32 +82,36 @@ All routes redirect to the root, and the root simply serves up `index.html`
     <link rel="stylesheet" href="/stylesheets/style.css">
   </head>
   <body>
-    <!-- this is the 'hook' where ReactDOM will render our root element -->
     <div id="app">
       <h1>ES5 React Demo</h1>
     </div>
-    <!-- third party dependencies run first, add React & ReactDOM to global scope -->
-    <script src="/react/dist/react.min.js"></script>
-    <script src="/react-dom/dist/react-dom.min.js"></script>
-    <!-- then we run our app, assuming access to React & ReactDOM -->
-    <script src="/app.js"></script>
-    <!-- additional first-party scripts would go here -->
+    <!-- we no longer have to serve up React & ReactDOM explicitly -->
+    <!-- everything we need to run our front-end code is output to bundle.js! -->
+    <script src="/bundle.js"></script>
   </body>
 </html>
 ```
 
-`browser/app.js` runs our ES5 React (assumes React & ReactDOM globals)
+and we can update `app.js` to use ES6, JSX and Modules
 
 ***app.js***
 
 ```js
-const App = React.createElement('h1', null, 'Hello World');
-// translates to <h1>Hello World</h1>
+// Webpack will bundle our dependencies along with our own app logic
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+class App extends React.Component {
+  render() {
+    return (
+      <div>
+        <h1>Hello World</h1>
+        <h2>+ Webpack!</h2>      
+      </div>
+    );
+  }
+}
 
 // render our root element to the DOM element with id 'app'
-ReactDOM.render(App, document.getElementById('app'));
+ReactDOM.render(<App />, document.getElementById('app'));
 ```
-
-This example is a bit trivial, but I wanted to show a basic 'Hello World' React app without Webpack or JSX or Class syntax to see that we can use React even without all those bells and whistles!
-
-Next up is `01-basic-es6-react`

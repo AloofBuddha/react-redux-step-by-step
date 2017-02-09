@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>ES5 React Demo</title>
+    <title>ES6 React Demo</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="/stylesheets/style.css">
@@ -9,13 +9,9 @@
   <body>
     <!-- this is the 'hook' where ReactDOM will render our root element -->
     <div id="app">
-      <h1>ES5 React Demo</h1>
+      <h1>ES6 React Demo</h1>
     </div>
-    <!-- third party dependencies run first, add React & ReactDOM to global scope -->
-    <script src="/react/dist/react.min.js"></script>
-    <script src="/react-dom/dist/react-dom.min.js"></script>
-    <!-- then we run our app, assuming React & ReactDOM-->
-    <script src="/app.js"></script>
-    <!-- additional scripts would go here -->
+    <!-- our one and only js file -->
+    <script src="/bundle.js"></script>
   </body>
 </html>
