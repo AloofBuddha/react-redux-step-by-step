@@ -116,6 +116,6 @@ class App extends React.Component {
 ReactDOM.render(<App />, document.getElementById('app'));
 ```
 
-[Change-set(https://github.com/kaizerroll/react-redux-step-by-step/compare/00-basic-es5-react...01-basic-es6-react?diff=unified&name=01-basic-es6-react)
+[Change-set](https://github.com/kaizerroll/react-redux-step-by-step/compare/00-basic-es5-react...01-basic-es6-react?diff=unified&name=01-basic-es6-react)
 
 Next up: `02-`
