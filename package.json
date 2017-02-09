@@ -1,0 +1,19 @@
+{
+  "name": "react-redux-step-by-step",
+  "version": "1.0.0",
+  "description": "A React Redux app built up incrementally",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "author": "Benjamin Cohen",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.14.1",
+    "morgan": "^1.8.0",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
+}
